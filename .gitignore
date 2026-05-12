@@ -1,1 +1,10 @@
+# IntelliJ
+.idea/
+*.iml
+
+# Compilados Java
+*.class
+target/
+
+# Ambiente
 .env
