@@ -26,8 +26,14 @@ public final class Input {
  }
 
  public String readText(String placeholder) {
-     System.out.print(" " + placeholder + ": ");
-     return scanner.nextLine().trim();
+     while(true) {
+         System.out.print(" " + placeholder + ": ");
+         String s = scanner.nextLine().trim();
+         if (!s.isEmpty()) {
+             return s;
+         }
+         Screen.error("Campo obrigatório.");
+     }
  }
 
  public int readInt(String placeholder){
@@ -40,6 +46,17 @@ public final class Input {
          }
      }
  }
+
+    public Double readDouble(String placeholder){
+        while(true){
+            System.out.print(" " + placeholder + ": ");
+            try{
+                return Double.parseDouble(scanner.nextLine().trim().replace(",", "."));
+            }catch (NumberFormatException e){
+                Screen.error("Digite um número inteiro.");
+            }
+        }
+    }
 
 public void pause(){
      System.out.print(Ansi.DIM + "\n Pressione Enter para continuar..." + Ansi.RESET);
