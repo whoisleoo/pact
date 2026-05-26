@@ -9,7 +9,8 @@ public final class Ansi {
     public static final String RESET = "\033[0m";
     public static final String BOLD = "\033[1m";
     public static final String DIM = "\033[2m";
-    public static final String CLEAR = "\033[2J\033[H";
+    public static final String BLINK = "\033[5m";
+    public static final String CLEAR = "\033[H\033[2J\033[3J";
 
     public static final String RED = "\033[31m"; // ERROR
     public static final String GREEN = "\033[32m"; // SUCESS

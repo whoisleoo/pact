@@ -1,7 +1,10 @@
 package cli.core;
 import java.util.Scanner;
 
-//LE E VALIDA ENTRADA DO USUARIO
+/*
+*   Classe responsavel por ler as entradas do usuário
+*   e validar elas bonitinho.
+ */
 
 public final class Input {
  private final Scanner scanner;
@@ -12,14 +15,17 @@ public final class Input {
 
  public int readOption(int max){
      while(true){
-         System.out.print(Ansi.BOLD + "\n Escolha: " + Ansi.RESET);
+         System.out.println();
+         Screen.openPrompt(Ansi.BOLD + "Escolha ➜" + Ansi.RESET);
          try{
              int o = Integer.parseInt(scanner.nextLine().trim());
+             Screen.closePrompt();
              if(o >= 0 && o <= max){
                  return o;
              }
              Screen.error("Digite um número entre 0 e " + max);
          }catch (NumberFormatException e){
+             Screen.closePrompt();
              Screen.error("Entrada inválida.");
          }
      }
@@ -27,8 +33,9 @@ public final class Input {
 
  public String readText(String placeholder) {
      while(true) {
-         System.out.print(" " + placeholder + ": ");
+         Screen.openPrompt(placeholder + " ➜");
          String s = scanner.nextLine().trim();
+         Screen.closePrompt();
          if (!s.isEmpty()) {
              return s;
          }
@@ -38,28 +45,34 @@ public final class Input {
 
  public int readInt(String placeholder){
      while(true){
-         System.out.print(" " + placeholder + ": ");
+         Screen.openPrompt(placeholder + " ➜");
          try{
-             return Integer.parseInt(scanner.nextLine().trim());
+             int o = Integer.parseInt(scanner.nextLine().trim());
+             Screen.closePrompt();
+             return o;
          }catch (NumberFormatException e){
-            Screen.error("Digite um número inteiro.");
+             Screen.closePrompt();
+             Screen.error("Digite um número inteiro.");
          }
      }
  }
 
     public Double readDouble(String placeholder){
         while(true){
-            System.out.print(" " + placeholder + ": ");
+            Screen.openPrompt(placeholder + " ➜");
             try{
-                return Double.parseDouble(scanner.nextLine().trim().replace(",", "."));
+                double d = Double.parseDouble(scanner.nextLine().trim().replace(",", "."));
+                Screen.closePrompt();
+                return d;
             }catch (NumberFormatException e){
-                Screen.error("Digite um número inteiro.");
+                Screen.closePrompt();
+                Screen.error("Digite um número válido.");
             }
         }
     }
 
 public void pause(){
-     System.out.print(Ansi.DIM + "\n Pressione Enter para continuar..." + Ansi.RESET);
+     System.out.print(Ansi.BLINK + "\n Pressione Enter para continuar..." + Ansi.RESET);
      scanner.nextLine();
 }
 
