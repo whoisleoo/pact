@@ -6,7 +6,7 @@ package cli.core;
 
 public final class Screen {
     private static final int width = 42;
-    private static final String border = "═".repeat(width);
+    private static final String border = "─".repeat(width);
 
     public static void clearScreen(){
         System.out.print(Ansi.CLEAR);
@@ -14,9 +14,9 @@ public final class Screen {
     }
 
     public static void header(String titulo){
-        System.out.println(Ansi.RED_PASTEL + "╔" + border + "╗");
-        System.out.println("║" + center(Ansi.pastel(titulo), width) + "║");
-        System.out.println("╚" + border + "╝" + Ansi.RESET);
+        System.out.println(Ansi.RED_PASTEL + "╭" + border + "╮");
+        System.out.println("│" + center(Ansi.pastel(titulo), width) + "│");
+        System.out.println("╰" + border + "╯" + Ansi.RESET);
 
     }
 
