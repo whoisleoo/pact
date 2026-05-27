@@ -19,19 +19,114 @@ pact/
         └── util/
 ```
 
-### To-do Next - Happy path perfeito se não quebrar nada
+### To-do Next — sequência de implementação
 
-Possiveis passos para continuar o projeto
+A ordem importa: cada passo depende do anterior. Não pule etapas SENAO MORTE 
 
-1. Configurar banco (local): editar e executar [Backend/db/schema.sql](Backend/db/schema.sql) e, opcionalmente, [Backend/db/seed.sql](Backend/db/seed.sql).
-2. DAOs (JDBC): implementar `dao/ProdutoDAO`, `dao/UsuarioDAO`, `dao/PedidoDAO`, `dao/PedidoItemDAO` com `PreparedStatement` e `try-with-resources`. Incluir `UPDATE ... WHERE estoque >= ?` para atualização condicional de estoque.
-3. Services (regras): implementar `service/ProdutoService` e `service/PedidoService` com validações de negócio (checagem de estoque antes de persistir, composição de `Pedido` e `ProdutoPedido`). Testar com mocks de DAO.
-4. Controller (console): montar menus no pacote `controller` que só deleguem ao `service` (sem usar `java.sql`). Implementar fluxos: cadastrar cliente, cadastrar produto, criar pedido, finalizar pedido.
-5. Thread de processamento: implementar `thread/ProcessadorPedidos` que busca pedidos com status `FILA`, marca como `PROCESSAMENTO` de forma atômica e finaliza após simulação (`Thread.sleep`). Abrir/fechar conexão por ciclo.
-6. Relatórios SQL: criar ao menos dois relatórios gerenciais (ex.: vendas por produto, total por cliente) usando consultas agregadas/agrupamentos no DAO e endpoints no controller para exibir.
-7. Testes e documentação: adicionar testes unitários para `service` e `dao` (usar base de dados de teste/local), gerar Diagrama de Classes e Documento de Requisitos.
-8. Entrega: preparar `README.md` final com instruções de compilação, configuração do MySQL e execução do projeto.
+#### 0. Alinhamento antes de codar (decisões abertas)
 
+Decidir pra nao foder depois:
+
+- **Cliente vs Usuario**: o enunciado pede uma entidade `Cliente` com `id`, `nome`, `email`. Hoje o model tem `Usuario` com `Autenticacao` (email + senha) de acordo com o diagrama do trello. Vai existir uma tabela `cliente` separada, ou `usuario` faz os dois papéis?
+- **Vendedor**: `Produto.idVendedor` e `Pedido.idVendedor`, manter assim ou só usar um 'user'.
+
+#### 1. Schema do banco — [Backend/db/schema.sql](Backend/db/schema.sql)
+
+Escrever o DDL completo refletindo as decisões do passo 0:
+
+- `CREATE DATABASE` + `USE`.
+- Tabelas: `usuario` (ou `cliente`), `produto`, `pedido`, `produto_pedido` (associativa).
+- Tipos: `BIGINT AUTO_INCREMENT` pros IDs, `DECIMAL(10,2)` pro preço, `INT` pra estoque/quantidade, `VARCHAR` pros textos com tamanho definido, `DATETIME` pros timestamps, `ENUM(...)` pro status e categoria.
+- Constraints de integridade:
+  - `PRIMARY KEY` em todos os IDs.
+  - `FOREIGN KEY` ligando `pedido.id_cliente`, `pedido.id_vendedor`, `produto_pedido.id_pedido`, `produto_pedido.id_produto`.
+  - `CHECK (preco > 0)`, `CHECK (estoque >= 0)`, `CHECK (quantidade > 0)`.
+  - `UNIQUE` no email do usuário.
+- `seed.sql` opcional com 2-3 linhas de cada tabela pra facilitar testes.
+
+**Saída esperada**: rodar `mysql -u root -p < schema.sql` cria tudo sem erro. Validar com `SHOW TABLES` e `DESCRIBE <tabela>`.
+
+#### 2. Exceções customizadas — pacote `exception/`
+
+Criar as classes que serão lançadas pelos services. Todas estendem `RuntimeException` (ou uma exception base do projeto):
+
+- `EstoqueInsuficienteException` — lançada quando o pedido pede mais do que tem em estoque.
+- `ClienteNaoEncontradoException` / `UsuarioNaoEncontradoException`.
+- `ProdutoNaoEncontradoException`.
+- `EmailInvalidoException` (opcional — o VO `Email` já lança `IllegalArgumentException`).
+- `PedidoNaoEncontradoException`.
+
+Cada uma com construtor recebendo mensagem e (opcionalmente) o ID/valor que causou o erro. Manter o pacote enxuto — só exceções, sem lógica.
+
+#### 3. `util/ConnectionFactory`
+
+Classe utilitária única, responsável por fornecer `Connection` JDBC.
+
+- O enunciado diz que o professor fornece uma classe utilitária básica — usar a dele quando chegar. Até lá, escrever um stub:
+  - Lê credenciais do `.env` (URL, usuário, senha) ou de constantes.
+  - Método estático `Connection getConnection() throws SQLException`.
+  - `Class.forName("com.mysql.cj.jdbc.Driver")` no static block (opcional em Java moderno, mas seguro).
+- **Importante**: a thread de processamento abre/fecha sua própria conexão por ciclo, então a `ConnectionFactory` precisa devolver conexões novas a cada chamada (não singleton).
+
+#### 4. DAOs — pacote `dao/`
+
+Um DAO por entidade. Padrão obrigatório:
+
+- `PreparedStatement` sempre (nunca `Statement` com concatenação).
+- `try-with-resources` em `Connection`, `PreparedStatement` e `ResultSet`.
+- Sem lógica de negócio — só CRUD + queries específicas.
+- **Object Calisthenics no mapeamento**: ao ler do `ResultSet`, popular o objeto via **construtor** — proibido usar setter. Os VOs já garantem isso por serem imutáveis.
+
+Ordem de implementação (do mais simples ao mais complexo):
+
+1. **`UsuarioDAO`** — `insert`, `findById`, `findByEmail`, `findAll`. Valida o padrão JDBC antes de escalar.
+2. **`ProdutoDAO`** — CRUD + `findByCategoria`, e o método crítico:
+   ```sql
+   UPDATE produto SET estoque = estoque - ? WHERE id = ? AND estoque >= ?
+   ```
+   Retorna `int` (linhas afetadas). Se for 0, é sinal de estoque insuficiente — o service lança a exception.
+3. **`PedidoDAO`** — `insert`, `updateStatus`, `findByStatus` (usado pela thread). O `updateStatus` da thread deve ser atômico:
+   ```sql
+   UPDATE pedido SET status = 'PROCESSAMENTO' WHERE id = ? AND status = 'FILA'
+   ```
+   (Garante que duas threads não peguem o mesmo pedido.)
+4. **`ProdutoPedidoDAO`** — `insertBatch` para inserir todos os itens de um pedido numa transação.
+
+#### 5. Services — pacote `service/`
+
+Camada de regras de negócio. Recebe DAOs por construtor (DI manual).
+
+- `UsuarioService` — cadastro com validação (email único, etc.).
+- `ProdutoService` — cadastro e listagem.
+- `PedidoService` — o mais complexo. Fluxo de `criarPedido`:
+  1. Buscar produtos de cada item.
+  2. Iniciar transação (`conn.setAutoCommit(false)`).
+  3. Para cada item: tentar baixar estoque com o `UPDATE` condicional.
+  4. Se algum falhar → `rollback` + lança `EstoqueInsuficienteException`.
+  5. Se todos passarem → inserir `pedido` (status `ABERTO`) + `produto_pedido[]` + `commit`.
+- Método `finalizarPedido(idPedido)` muda status para `FILA`.
+
+#### 6. Controllers (console) — pacote `controller/`
+
+Camada de menus. **Proibido importar `java.sql`** — só chama `service`.
+
+- `Main` com loop de menu principal: cadastrar cliente, cadastrar produto, criar pedido, finalizar pedido, listar tudo, relatórios, sair.
+- Cada submenu coleta input via `Scanner`, constrói os VOs (`new Email(...)`, `new Senha(...)`), captura `IllegalArgumentException` e exceções customizadas, exibe mensagem amigável.
+- **Importante**: o menu não pode bloquear a thread de processamento — ela roda em paralelo.
+
+#### 7. Thread de processamento — `thread/ProcessadorPedidos` - PAIA
+
+`Runnable` ou `Thread`. Loop infinito (com `Thread.sleep` entre ciclos):
+
+1. Abrir conexão própria via `ConnectionFactory.getConnection()`.
+2. Buscar pedidos com status `FILA` (`SELECT ... LIMIT 1`).
+3. Marcar como `PROCESSAMENTO` com o UPDATE condicional atômico do passo 4.
+4. Se conseguiu (linhas afetadas == 1), simular processamento (`Thread.sleep(3000)`).
+5. Atualizar status para `ENTREGUE` (ou `FINALIZADO`).
+6. Fechar conexão.
+7. Voltar pro passo 1.
+
+Iniciar a thread no `Main` antes do loop de menu: `new Thread(new ProcessadorPedidos()).start()`.
 
 ### Backend
 
