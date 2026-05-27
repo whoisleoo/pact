@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 
 import model.domain.Categoria;
 import model.domain.DetalhesProduto;
+import model.domain.Quantidade;
 
 public record Produto(
         Long id,
@@ -15,7 +16,8 @@ public record Produto(
         Boolean isAtivo,
         Categoria categoria,
         Long idVendedor,
-        LocalDateTime createdAt) {
+        LocalDateTime createdAt,
+        Quantidade quantidadeEstoque) {
     public Produto {
         if (isAtivo == null)
             isAtivo = true;

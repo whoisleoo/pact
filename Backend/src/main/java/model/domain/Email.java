@@ -4,7 +4,7 @@ public class Email {
     private final String email;
 
     public Email(String email) {
-        if (!isValidEmail(email) || email.isBlank() || email == null) {
+        if (email == null || email.isBlank() || !isValidEmail(email)) {
             throw new IllegalArgumentException("Email não pode ser nulo ou vazio");
         }
         this.email = email;
