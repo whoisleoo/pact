@@ -20,6 +20,20 @@ pact/
     └── styles/
 ```
 
+### To-do Next - Happy path perfeito se não quebrar nada
+
+Possiveis passos para continuar o projeto
+
+1. Configurar banco (local): editar e executar [Backend/db/schema.sql](Backend/db/schema.sql) e, opcionalmente, [Backend/db/seed.sql](Backend/db/seed.sql).
+2. DAOs (JDBC): implementar `dao/ProdutoDAO`, `dao/UsuarioDAO`, `dao/PedidoDAO`, `dao/PedidoItemDAO` com `PreparedStatement` e `try-with-resources`. Incluir `UPDATE ... WHERE estoque >= ?` para atualização condicional de estoque.
+3. Services (regras): implementar `service/ProdutoService` e `service/PedidoService` com validações de negócio (checagem de estoque antes de persistir, composição de `Pedido` e `PedidoItem`). Testar com mocks de DAO.
+4. Controller (console): montar menus no pacote `controller` que só deleguem ao `service` (sem usar `java.sql`). Implementar fluxos: cadastrar cliente, cadastrar produto, criar pedido, finalizar pedido.
+5. Thread de processamento: implementar `thread/ProcessadorPedidos` que busca pedidos com status `FILA`, marca como `PROCESSANDO` de forma atômica e finaliza após simulação (`Thread.sleep`). Abrir/fechar conexão por ciclo.
+6. Relatórios SQL: criar ao menos dois relatórios gerenciais (ex.: vendas por produto, total por cliente) usando consultas agregadas/agrupamentos no DAO e endpoints no controller para exibir.
+7. Testes e documentação: adicionar testes unitários para `service` e `dao` (usar base de dados de teste/local), gerar Diagrama de Classes e Documento de Requisitos.
+8. Entrega: preparar `README.md` final com instruções de compilação, configuração do MySQL e execução do projeto.
+
+
 ### Backend
 
 | Pacote | Função                                                                                                                                                                                                                               |
