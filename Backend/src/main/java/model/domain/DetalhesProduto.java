@@ -1,7 +1,3 @@
 package model.domain;
 
-public record DetalhesProduto(
-        Nome nome,
-        Descricao descricao,
-        Preco preco) {
-}
+public record DetalhesProduto(Nome nome, Descricao descricao, Preco preco) {}
