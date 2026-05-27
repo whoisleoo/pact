@@ -39,25 +39,29 @@ pact/
 | `schema.sql` | DDL completo — criação do banco, tabelas, relacionamentos e constraints. Execute este arquivo antes de rodar o projeto. |
 | `seed.sql` | Dados de teste para popular o banco em ambiente de desenvolvimento. Opcional. |
 
-### Backend/Model 
+### Backend/Model
 
-- `Autenticacao.java`: combina `Email` e `Senha` como um agregado de autenticação para o usuário.
-- `Categoria.java`: enum com categorias de produto (atualmente: DEV, MARKETING, VIDEOS, DESIGN). Recomenda-se alinhar com requisitos (ALIMENTOS, ELETRONICOS, LIVROS) se necessário.
-- `Descricao.java`: VO que valida descrição não nula e não vazia.
-- `DetalhesProduto.java`: `record` agregando `Nome`, `Descricao` e `Preco` (informações de produto imutáveis).
-- `Email.java`: VO que valida email no construtor; atualmente verifica `null`/`blank` e um formato simples (contém `@` e `.`). Recomenda-se normalizar com `trim()` e usar regex mais robusta.
-- `Senha.java`: VO que valida não nulo/não vazio; atualmente armazena a senha em texto (rever armazenamento/hashing para produção).
-- `Nome.java`: VO que valida não nulo/não vazio.
-- `Preco.java`: VO que armazena `BigDecimal` e valida não-negatividade (rever para exigir `> 0` se o requisito pedir preço positivo).
-- `Quantidade.java`: VO que valida quantidade não-negativa.
-- `FilaPedido.java`: enum de estados do pedido (atualmente: FILA, PROCESSAMENTO, ENTREGUE). Recomenda-se alinhar com o enunciado (`ABERTO, FILA, PROCESSANDO, FINALIZADO`).
+| Arquivo | Função |
+|---|---|
+| `Autenticacao.java` | Combina `Email` e `Senha` como um agregado de autenticação para o usuário. |
+| `Categoria.java` | Enum com categorias de produto (atualmente: DEV, MARKETING, VIDEOS, DESIGN). Recomenda-se alinhar com requisitos caso necessário. |
+| `Descricao.java` | VO que valida descrição não nula e não vazia. |
+| `DetalhesProduto.java` | `record` agregando `Nome`, `Descricao` e `Preco` (informações de produto imutáveis). |
+| `Email.java` | VO que valida email no construtor; atualmente verifica `null`/`blank` e um formato simples (contém `@` e `.`). Recomenda-se normalizar com `trim()` e usar regex mais robusta. |
+| `Senha.java` | VO que valida não nulo/não vazio; atualmente armazena a senha em texto (rever armazenamento/hashing para produção). |
+| `Nome.java` | VO que valida não nulo/não vazio. |
+| `Preco.java` | VO que armazena `BigDecimal` e valida não-negatividade (rever para exigir `> 0` se o requisito pedir preço positivo). |
+| `Quantidade.java` | VO que valida quantidade não-negativa. |
+| `FilaPedido.java` | Enum de estados do pedido (atualmente: FILA, PROCESSAMENTO, ENTREGUE). Recomenda-se alinhar com o enunciado (`ABERTO, FILA, PROCESSANDO, FINALIZADO`). |
 
-(Records usados para persistência / DTOs):
+**Records (persistência / DTOs)**
 
-- `Usuario.java`: `record` representando usuário persistido; possui construtor auxiliar que define `createdAt`.
-- `Produto.java`: `record` representando produto persistido; contém `DetalhesProduto`, `isAtivo`, `categoria`, `idVendedor` e `createdAt`. Observação: falta campo de `estoque` para validação de pedidos.
-- `ProdutoPedido.java`: representa o item de pedido (preço unitário e quantidade). Recomendação: renomear para `PedidoItem` e padronizar campos (`id`, `pedidoId`, `produtoId`, `precoUnitario`, `quantidade`).
-- `Pedido.java`: `record` com `id`, `status` (enum), `idCliente`, `idVendedor`. Recomenda-se adicionar `createdAt`/`updatedAt` para auditoria.
+| Arquivo | Função |
+|---|---|
+| `Usuario.java` | `record` representando usuário persistido; possui construtor auxiliar que define `createdAt`. |
+| `Produto.java` | `record` representando produto persistido; contém `DetalhesProduto`, `isAtivo`, `categoria`, `idVendedor` e `createdAt`. Observação: falta campo de `estoque` para validação de pedidos. |
+| `ProdutoPedido.java` | Representa o item de pedido (preço unitário e quantidade). Recomenda-se renomear para `PedidoItem` e padronizar campos (`id`, `pedidoId`, `produtoId`, `precoUnitario`, `quantidade`). |
+| `Pedido.java` | `record` com `id`, `status` (enum), `idCliente`, `idVendedor`. Recomenda-se adicionar `createdAt`/`updatedAt` para auditoria. |
 
 Observações gerais
 
