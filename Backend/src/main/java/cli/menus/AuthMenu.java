@@ -30,7 +30,7 @@ public class AuthMenu implements Menu {
 
     @Override
     public String title() {
-        return "\uD83E\uDE78 PACT - Welcome!";
+        return "\uD83E\uDE78 PACT - Auth!";
     }
 
     @Override
@@ -49,7 +49,7 @@ public class AuthMenu implements Menu {
 
     @Override
     public String note(){
-        return "Desenvolvido por LEGEM";
+        return "Seja bem vindo ao PACT!";
     }
 
 

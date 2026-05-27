@@ -19,17 +19,21 @@ public final class Screen {
         System.out.println("╰" + border + "╯" + Ansi.RESET);
     }
 
-    public static void menuOptions(String[] options){
+    public static void menuOptions(String[] options, int selected){
         System.out.println(Ansi.DIM + "╭" + border + "╮" + Ansi.RESET);
         for(int i = 0; i < options.length; i++){
-            String linha = "  " + Ansi.BOLD + "(" + (i + 1) + ")" + Ansi.RESET + " " + options[i];
-            System.out.println(Ansi.DIM + "│" + Ansi.RESET + padRight(linha, width) + Ansi.DIM + "│" + Ansi.RESET);
+            boolean active = (i == selected);
+            String cursor = active ? Ansi.RED_PASTEL + " ▶" + Ansi.RESET : "  ";
+            String label = active ? Ansi.BOLD + options[i] + Ansi.RESET : options[i];
+            System.out.println(Ansi.DIM + "│" + Ansi.RESET + padRight(cursor + " " + label, width) + Ansi.DIM + "│" + Ansi.RESET);
+
         }
-        String voltar = "  " + Ansi.BOLD + "(0)" + Ansi.RESET + " ExitSe";
-        System.out.println(Ansi.DIM + "│" + Ansi.RESET + padRight(voltar, width) + Ansi.DIM + "│" + Ansi.RESET);
+        boolean exitActive = (selected == options.length);
+        String exitCursor = exitActive ? Ansi.RED_PASTEL + " ▶" + Ansi.RESET : "  ";
+        String exitLabel  = exitActive ? Ansi.BOLD + "Sair" + Ansi.RESET : "Sair";
+        System.out.println(Ansi.DIM + "│" + Ansi.RESET + padRight(exitCursor + " " + exitLabel, width) + Ansi.DIM + "│" + Ansi.RESET);
         System.out.println(Ansi.DIM + "╰" + border + "╯" + Ansi.RESET);
     }
-
     public static void openPrompt(String label){
         int labelLen = label.replaceAll("\033\\[[\\d;]*m", "").length();
         int trailing = Math.max(0, width - 2 - labelLen - 1);

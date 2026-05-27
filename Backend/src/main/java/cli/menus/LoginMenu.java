@@ -33,6 +33,11 @@ public class LoginMenu implements Form {
     }
 
     @Override
+    public int[] fieldLimits() {
+        return new int[]{ 20, 12 }; // limite pro texto e pra senha
+    }
+
+    @Override
     public void submit(String[] values, Input input) {
     String username = values[0];
     String password = values[1];

@@ -9,22 +9,20 @@ public final class MenuRunner {
     }
 
     public void execute(Menu menu){
-        while(true){
+        while (true) {
             String[] options = menu.options();
             Screen.clearScreen();
-            if(menu.banner() != null) Screen.banner(menu.banner());
+            if (menu.banner() != null) Screen.banner(menu.banner());
+            System.out.println();
+            System.out.println();
             Screen.header(menu.title());
             System.out.println();
-//            if(menu.note() != null) Screen.note(menu.note());
-            Screen.menuOptions(options);
+            if(menu.note() != null) Screen.note(menu.note());
 
 
 
-            int escolha = input.readOption(options.length);
-            if(escolha == 0){
-                return;
-            }
-
+            int escolha = input.selectOption(options);
+            if (escolha == 0) return;
 
             Screen.clearScreen();
             menu.execute(escolha, input);

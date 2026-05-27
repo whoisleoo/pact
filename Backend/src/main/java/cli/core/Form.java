@@ -10,4 +10,8 @@ public interface Form {
     default int[] passwordFields() {
         return new int[]{};
     }
+
+    default int[] fieldLimits() {
+        return new int[]{};
+    }
 }
