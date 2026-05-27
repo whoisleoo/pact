@@ -12,5 +12,4 @@ public class Autenticacao {
     public Email getEmail() {
         return email;
     }
-
 }
