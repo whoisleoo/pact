@@ -1,6 +1,7 @@
 package model.domain;
 
 public class Autenticacao {
+
     private final Email email;
     private final Senha senha;
 
@@ -10,6 +11,10 @@ public class Autenticacao {
     }
 
     public Email getEmail() {
-        return email;
+        return this.email;
+    }
+
+    public boolean autenticar(Senha tentativa) {
+        return this.senha.equals(tentativa);
     }
 }
