@@ -29,12 +29,12 @@ public class MainMenu implements Menu {
 
     @Override
     public String title() {
-        return "PACT - Teste de Menu";
+        return "PACT - Welcome!";
     }
 
     @Override
     public String[] options() {
-        return new String[]{"Home", "Pedidos", "Clientes"};
+        return new String[]{"Login", "Registrar"};
     }
 
     @Override
@@ -42,7 +42,6 @@ public class MainMenu implements Menu {
         switch (escolha){
             case 1 -> runner.execute(new TesteMenu(runner));
             case 2 -> Screen.warning("Em desenvolvimento...");
-            case 3 -> Screen.warning("Em desenvolvimento...");
         }
     }
 }

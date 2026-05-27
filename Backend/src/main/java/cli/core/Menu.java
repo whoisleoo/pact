@@ -7,4 +7,7 @@ public interface Menu {
     default String[] banner() {
         return null;
     }
+    default String note() {
+        return null;
+    }
 }

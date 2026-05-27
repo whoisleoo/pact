@@ -15,12 +15,16 @@ public final class MenuRunner {
             if(menu.banner() != null) Screen.banner(menu.banner());
             Screen.header(menu.title());
             System.out.println();
+//            if(menu.note() != null) Screen.note(menu.note());
             Screen.menuOptions(options);
+
+
 
             int escolha = input.readOption(options.length);
             if(escolha == 0){
                 return;
             }
+
 
             Screen.clearScreen();
             menu.execute(escolha, input);

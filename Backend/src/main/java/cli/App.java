@@ -3,6 +3,7 @@ package cli;
 import cli.core.Input;
 import cli.core.MenuRunner;
 import cli.core.Screen;
+import cli.menus.AuthMenu;
 import cli.menus.MainMenu;
 
 import java.io.PrintStream;
@@ -15,7 +16,7 @@ public class App {
         Input input = new Input(scanner);
         MenuRunner runner = new MenuRunner(input);
 
-        runner.execute(new MainMenu(runner));
+        runner.execute(new AuthMenu(runner));
         scanner.close();
     }
 }

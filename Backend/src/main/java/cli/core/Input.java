@@ -1,5 +1,10 @@
 package cli.core;
+import java.io.IOException;
 import java.util.Scanner;
+import org.jline.reader.LineReader;
+import org.jline.reader.LineReaderBuilder;
+import org.jline.terminal.Terminal;
+import org.jline.terminal.TerminalBuilder;
 
 /*
 *   Classe responsavel por ler as entradas do usuário
@@ -33,7 +38,7 @@ public final class Input {
 
  public String readText(String placeholder) {
      while(true) {
-         Screen.openPrompt(placeholder + " ➜");
+         Screen.openPrompt(Ansi.BOLD + placeholder + " ➜" + Ansi.RESET);
          String s = scanner.nextLine().trim();
          Screen.closePrompt();
          if (!s.isEmpty()) {
@@ -57,19 +62,35 @@ public final class Input {
      }
  }
 
-    public Double readDouble(String placeholder){
-        while(true){
+    public Double readDouble(String placeholder) {
+        while (true) {
             Screen.openPrompt(placeholder + " ➜");
-            try{
+            try {
                 double d = Double.parseDouble(scanner.nextLine().trim().replace(",", "."));
                 Screen.closePrompt();
                 return d;
-            }catch (NumberFormatException e){
+            } catch (NumberFormatException e) {
                 Screen.closePrompt();
                 Screen.error("Digite um número válido.");
             }
         }
     }
+
+
+public String readPassword(String placeholder) {
+    while (true) {
+        Screen.openPrompt(Ansi.BOLD + placeholder + " ➜" + Ansi.RESET);
+        try (Terminal terminal = TerminalBuilder.builder().system(true).build()) {
+            LineReader reader = LineReaderBuilder.builder().terminal(terminal).build();
+            String pwd = reader.readLine('*').trim();
+            Screen.closePrompt();
+            if (!pwd.isEmpty()) return pwd;
+        } catch (IOException e) {
+            Screen.closePrompt();
+        }
+        Screen.error("Campo obrigatório.");
+    }
+}
 
 public void pause(){
      System.out.print(Ansi.BLINK + "\n Pressione Enter para continuar..." + Ansi.RESET);

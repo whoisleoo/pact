@@ -25,7 +25,7 @@ public final class Screen {
             String linha = "  " + Ansi.BOLD + "(" + (i + 1) + ")" + Ansi.RESET + " " + options[i];
             System.out.println(Ansi.DIM + "│" + Ansi.RESET + padRight(linha, width) + Ansi.DIM + "│" + Ansi.RESET);
         }
-        String voltar = "  " + Ansi.BOLD + "(0)" + Ansi.RESET + " Voltar";
+        String voltar = "  " + Ansi.BOLD + "(0)" + Ansi.RESET + " ExitSe";
         System.out.println(Ansi.DIM + "│" + Ansi.RESET + padRight(voltar, width) + Ansi.DIM + "│" + Ansi.RESET);
         System.out.println(Ansi.DIM + "╰" + border + "╯" + Ansi.RESET);
     }
@@ -57,6 +57,10 @@ public final class Screen {
 
     public static void warning(String msg){
         msgBox(Ansi.YELLOW, "ⓘ", msg);
+    }
+
+    public static void note(String msg){
+        msgBox(Ansi.RED_PASTEL, "✦", msg);
     }
 
     private static void msgBox(String color, String icon, String msg){
