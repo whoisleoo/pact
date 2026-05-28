@@ -1,7 +1,8 @@
 package model.domain;
 
-public enum FilaPedido {
+public enum StatusPedido {
+    ABERTO,
     FILA,
     PROCESSAMENTO,
-    ENTREGUE
+    ENTREGUE,
 }
