@@ -9,7 +9,17 @@ public class Nome {
             throw new IllegalArgumentException(
                 "Nome não pode ser nulo ou vazio"
             );
+
+
         }
+
+        if(nome.length() < 3 || nome.length() > 150){
+            throw new IllegalArgumentException(
+                    "Nome inválido."
+            );
+        }
+
+        
         this.nome = nome;
     }
 

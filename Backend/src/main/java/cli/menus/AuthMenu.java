@@ -42,7 +42,7 @@ public class AuthMenu implements Menu {
     public void execute(int escolha, Input input) {
         switch (escolha) {
             case 1 -> new FormRunner(input).execute(new LoginMenu());
-            case 2 -> runner.execute(new RegisterMenu(runner));
+            case 2 -> new FormRunner(input).execute(new RegisterMenu());
 
         }
     }
