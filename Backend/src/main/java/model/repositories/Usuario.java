@@ -13,4 +13,16 @@ public record Usuario(
     public Usuario(Nome nome, Autenticacao autenticacao) {
         this(null, nome, autenticacao, LocalDateTime.now());
     }
+
+    public String ObterEmail() {
+        return autenticacao.ObterEmailAsString();
+    }
+
+    public String ObterNome() {
+        return nome.toString();
+    }
+
+    public String ObterSenhaBanco() {
+        return autenticacao.extrairSenha();
+    }
 }

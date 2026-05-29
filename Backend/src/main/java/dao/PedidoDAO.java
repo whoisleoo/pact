@@ -17,7 +17,7 @@ public class PedidoDAO {
     }
 
     public void insert(Pedido pedido) throws SQLException {
-
+        //
     }
 
     public Pedido findById(Long id) throws SQLException {
@@ -28,7 +28,8 @@ public class PedidoDAO {
         return new ArrayList<>();
     }
 
-    public int updateStatus(Long id, String statusAtual, String novoStatus) throws SQLException {
+    public int updateStatus(Long id, String statusAtual, String novoStatus)
+        throws SQLException {
         return 0;
     }
 }

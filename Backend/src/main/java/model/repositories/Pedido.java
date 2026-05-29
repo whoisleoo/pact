@@ -3,13 +3,11 @@ package model.repositories;
 import java.util.List;
 import model.domain.StatusPedido;
 
-// id, status (enum: FILA, PROCESSAMENTO, ENTREGUE), id cliente, id vendedor
-
 public record Pedido(
     Long id,
     Long idCliente,
     Long idVendedor,
-    List<ProdutoPedido> itens,
+    List<ProdutoPedido> itens, // precisa de getter especifico para listar
     StatusPedido status
 ) {
     public Pedido {

@@ -27,6 +27,4 @@ public class Email {
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
         "^(?=.{1,254}$)(?=.{1,64}@)[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z]{2,63}$"
     );
-
-    // regex pronto de email
 }

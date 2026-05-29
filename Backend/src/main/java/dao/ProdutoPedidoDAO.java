@@ -16,9 +16,7 @@ public class ProdutoPedidoDAO {
         this.connection = connection;
     }
 
-    public void insertBatch(List<ProdutoPedido> itens) throws SQLException {
-
-    }
+    public void insertBatch(List<ProdutoPedido> itens) throws SQLException {}
 
     public List<ProdutoPedido> findByPedido(Long idPedido) throws SQLException {
         return new ArrayList<>();
