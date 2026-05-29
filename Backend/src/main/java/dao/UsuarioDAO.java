@@ -45,9 +45,24 @@ public class UsuarioDAO {
 }
 
     public Usuario findByEmail(String email) throws SQLException {
-        return null;
-    }
+    String sql = "select id_usuario, nome, e_mail, created_at from usuario where e_mail = ?";
 
+    try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+        stmt.setString(1, email);
+
+        try (ResultSet rs = stmt.executeQuery()) {
+            if (rs.next()) {
+                return new Usuario(
+                    rs.getLong("id_usuario"),
+                    new Nome(rs.getString("nome")),
+                    new Autenticacao(new Email(rs.getString("e_mail")), null),
+                    rs.getTimestamp("created_at").toLocalDateTime()
+                );
+            }
+        }
+    }
+    return null;
+}
     public List<Usuario> findAll() throws SQLException {
         return new ArrayList<>();
     }
