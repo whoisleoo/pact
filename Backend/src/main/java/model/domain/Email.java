@@ -1,5 +1,7 @@
 package model.domain;
 
+import exception.ValidationException;
+
 import java.util.regex.Pattern;
 
 public class Email {
@@ -8,9 +10,7 @@ public class Email {
 
     public Email(String email) {
         if (email == null || email.isBlank() || !isValidEmail(email)) {
-            throw new IllegalArgumentException(
-                "Email não pode ser nulo ou vazio"
-            );
+            throw new ValidationException("Email", "Email vázio ou inválido.");
         }
         this.email = email;
     }
