@@ -183,7 +183,7 @@ Use este arquivo como referência rápida ao implementar DAOs e serviços que co
 
 ### Build (Maven)
 
-O projeto usa Maven, note-se que ele VAI ter que ser alterado com o passar do tempo pra funfar com o CLI. O [Backend/pom.xml](Backend/pom.xml) define:
+O projeto usa Maven, note-se que ele VAI ter que ser alterado com o passar do tempo pra funfar com o CLI. FAVOR PIA LEO ADICIONAR O POM DELE AQUI. O [Backend/pom.xml](Backend/pom.xml) deve (deveria) definir:
 
 - Java 21 como source/target
 - Encoding UTF-8

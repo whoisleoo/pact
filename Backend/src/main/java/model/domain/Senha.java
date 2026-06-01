@@ -34,4 +34,8 @@ public class Senha {
     public int hashCode() {
         return senha.hashCode();
     }
+
+    public String senhaBanco() {
+        return this.senha;
+    }
 }
