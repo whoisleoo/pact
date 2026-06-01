@@ -10,8 +10,12 @@ public class Autenticacao {
         this.senha = senha;
     }
 
-    public Email getEmail() {
-        return this.email;
+    public String ObterEmailAsString() {
+        return email.toString();
+    }
+
+    public String extrairSenha() {
+        return senha.senhaBanco();
     }
 
     public boolean autenticar(Senha tentativa) {

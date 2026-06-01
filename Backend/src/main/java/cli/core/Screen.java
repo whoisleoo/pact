@@ -1,7 +1,7 @@
 package cli.core;
 
 public final class Screen {
-    private static final int width = 42;
+    private static final int width = 42; // TORNAR DINAMICO
     private static final String border = "─".repeat(width);
 
     public static void banner(String[] linhas){

@@ -13,7 +13,8 @@ public class Descricao {
         this.descricao = descricao;
     }
 
-    public String getDescricao() {
+    @Override
+    public String toString() {
         return descricao;
     }
 }

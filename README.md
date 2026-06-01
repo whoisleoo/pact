@@ -18,35 +18,14 @@ pact/
         ├── thread/
         └── util/
 ```
+### Ja feito -
+> Model, DAO, Schema, Parte da ui
 
 ### To-do Next — sequência de implementação
 
 A ordem importa: cada passo depende do anterior. Não pule etapas SENAO MORTE 
 
-#### 0. Alinhamento antes de codar (decisões abertas)
-
-Decidir pra nao foder depois:
-
-- **Cliente vs Usuario**: o enunciado pede uma entidade `Cliente` com `id`, `nome`, `email`. Hoje o model tem `Usuario` com `Autenticacao` (email + senha) de acordo com o diagrama do trello. Vai existir uma tabela `cliente` separada, ou `usuario` faz os dois papéis?
-- **Vendedor**: `Produto.idVendedor` e `Pedido.idVendedor`, manter assim ou só usar um 'user'.
-
-#### 1. Schema do banco — [Backend/db/schema.sql](Backend/db/schema.sql)
-
-Escrever o DDL completo refletindo as decisões do passo 0:
-
-- `CREATE DATABASE` + `USE`.
-- Tabelas: `usuario` (ou `cliente`), `produto`, `pedido`, `produto_pedido` (associativa).
-- Tipos: `BIGINT AUTO_INCREMENT` pros IDs, `DECIMAL(10,2)` pro preço, `INT` pra estoque/quantidade, `VARCHAR` pros textos com tamanho definido, `DATETIME` pros timestamps, `ENUM(...)` pro status e categoria.
-- Constraints de integridade:
-  - `PRIMARY KEY` em todos os IDs.
-  - `FOREIGN KEY` ligando `pedido.id_cliente`, `pedido.id_vendedor`, `produto_pedido.id_pedido`, `produto_pedido.id_produto`.
-  - `CHECK (preco > 0)`, `CHECK (estoque >= 0)`, `CHECK (quantidade > 0)`.
-  - `UNIQUE` no email do usuário.
-- `seed.sql` opcional com 2-3 linhas de cada tabela pra facilitar testes.
-
-**Saída esperada**: rodar `mysql -u root -p < schema.sql` cria tudo sem erro. Validar com `SHOW TABLES` e `DESCRIBE <tabela>`.
-
-#### 2. Exceções customizadas — pacote `exception/`
+#### 1. Exceções customizadas — pacote `exception/`
 
 Criar as classes que serão lançadas pelos services. Todas estendem `RuntimeException` (ou uma exception base do projeto):
 
@@ -58,7 +37,7 @@ Criar as classes que serão lançadas pelos services. Todas estendem `RuntimeExc
 
 Cada uma com construtor recebendo mensagem e (opcionalmente) o ID/valor que causou o erro. Manter o pacote enxuto — só exceções, sem lógica.
 
-#### 3. `util/ConnectionFactory`
+#### 2. `util/ConnectionFactory`
 
 Classe utilitária única, responsável por fornecer `Connection` JDBC.
 
@@ -68,31 +47,7 @@ Classe utilitária única, responsável por fornecer `Connection` JDBC.
   - `Class.forName("com.mysql.cj.jdbc.Driver")` no static block (opcional em Java moderno, mas seguro).
 - **Importante**: a thread de processamento abre/fecha sua própria conexão por ciclo, então a `ConnectionFactory` precisa devolver conexões novas a cada chamada (não singleton).
 
-#### 4. DAOs — pacote `dao/`
-
-Um DAO por entidade. Padrão obrigatório:
-
-- `PreparedStatement` sempre (nunca `Statement` com concatenação).
-- `try-with-resources` em `Connection`, `PreparedStatement` e `ResultSet`.
-- Sem lógica de negócio — só CRUD + queries específicas.
-- **Object Calisthenics no mapeamento**: ao ler do `ResultSet`, popular o objeto via **construtor** — proibido usar setter. Os VOs já garantem isso por serem imutáveis.
-
-Ordem de implementação (do mais simples ao mais complexo):
-
-1. **`UsuarioDAO`** — `insert`, `findById`, `findByEmail`, `findAll`. Valida o padrão JDBC antes de escalar.
-2. **`ProdutoDAO`** — CRUD + `findByCategoria`, e o método crítico:
-   ```sql
-   UPDATE produto SET estoque = estoque - ? WHERE id = ? AND estoque >= ?
-   ```
-   Retorna `int` (linhas afetadas). Se for 0, é sinal de estoque insuficiente — o service lança a exception.
-3. **`PedidoDAO`** — `insert`, `updateStatus`, `findByStatus` (usado pela thread). O `updateStatus` da thread deve ser atômico:
-   ```sql
-   UPDATE pedido SET status = 'PROCESSAMENTO' WHERE id = ? AND status = 'FILA'
-   ```
-   (Garante que duas threads não peguem o mesmo pedido.)
-4. **`ProdutoPedidoDAO`** — `insertBatch` para inserir todos os itens de um pedido numa transação.
-
-#### 5. Services — pacote `service/`
+#### 3. Services — pacote `service/`
 
 Camada de regras de negócio. Recebe DAOs por construtor (DI manual).
 
@@ -106,7 +61,7 @@ Camada de regras de negócio. Recebe DAOs por construtor (DI manual).
   5. Se todos passarem → inserir `pedido` (status `ABERTO`) + `produto_pedido[]` + `commit`.
 - Método `finalizarPedido(idPedido)` muda status para `FILA`.
 
-#### 6. Controllers (console) — pacote `controller/`
+#### 4. Controllers (console) — pacote `controller/`
 
 Camada de menus. **Proibido importar `java.sql`** — só chama `service`.
 
@@ -114,7 +69,7 @@ Camada de menus. **Proibido importar `java.sql`** — só chama `service`.
 - Cada submenu coleta input via `Scanner`, constrói os VOs (`new Email(...)`, `new Senha(...)`), captura `IllegalArgumentException` e exceções customizadas, exibe mensagem amigável.
 - **Importante**: o menu não pode bloquear a thread de processamento — ela roda em paralelo.
 
-#### 7. Thread de processamento — `thread/ProcessadorPedidos` - PAIA
+#### 5. Thread de processamento — `thread/ProcessadorPedidos` - PAIA
 
 `Runnable` ou `Thread`. Loop infinito (com `Thread.sleep` entre ciclos):
 
@@ -183,7 +138,7 @@ Use este arquivo como referência rápida ao implementar DAOs e serviços que co
 
 ### Build (Maven)
 
-O projeto usa Maven, note-se que ele VAI ter que ser alterado com o passar do tempo pra funfar com o CLI. O [Backend/pom.xml](Backend/pom.xml) define:
+O projeto usa Maven, note-se que ele VAI ter que ser alterado com o passar do tempo pra funfar com o CLI. FAVOR PIA LEO ADICIONAR O POM DELE AQUI. O [Backend/pom.xml](Backend/pom.xml) deve (deveria) definir:
 
 - Java 21 como source/target
 - Encoding UTF-8

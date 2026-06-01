@@ -1,5 +1,7 @@
 package model.domain;
 
+import exception.ValidationException;
+
 import java.util.regex.Pattern;
 
 public class Email {
@@ -8,9 +10,7 @@ public class Email {
 
     public Email(String email) {
         if (email == null || email.isBlank() || !isValidEmail(email)) {
-            throw new IllegalArgumentException(
-                "Email não pode ser nulo ou vazio"
-            );
+            throw new ValidationException("Email", "Email vázio ou inválido.");
         }
         this.email = email;
     }
@@ -27,6 +27,4 @@ public class Email {
     private static final Pattern EMAIL_PATTERN = Pattern.compile(
         "^(?=.{1,254}$)(?=.{1,64}@)[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\\.[A-Za-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[A-Za-z0-9](?:[A-Za-z0-9-]{0,61}[A-Za-z0-9])?\\.)+[A-Za-z]{2,63}$"
     );
-
-    // regex pronto de email
 }
