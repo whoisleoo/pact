@@ -14,8 +14,8 @@ public class Autenticacao {
         return email.toString();
     }
 
-    public String extrairSenha() {
-        return senha.senhaBanco();
+    public Senha extrairSenha() {
+        return this.senha;
     }
 
     public boolean autenticar(Senha tentativa) {

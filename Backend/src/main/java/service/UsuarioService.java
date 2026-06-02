@@ -5,9 +5,6 @@ import exception.AuthException;
 import exception.DupeRegisterException;
 import exception.RegisterNotFoundException;
 import model.domain.Autenticacao;
-import model.domain.Email;
-import model.domain.Nome;
-import model.domain.Senha;
 import model.repositories.Usuario;
 
 import java.sql.SQLException;
@@ -30,10 +27,14 @@ public class UsuarioService {
 
     }
 
-public Usuario login(String email, Senha tentativa) throws SQLException{
-        Usuario usuario = usuarioDao.findByEmail(email);
+public Usuario login(Autenticacao credenciais) throws SQLException{
+        Usuario usuario = usuarioDao.findByEmail(credenciais.ObterEmailAsString());
 
-        if(usuario == null || !usuario.autenticacao().autenticar(tentativa)){ // Mudar quando trocar pra SHA256
+        if(usuario == null){
+            throw new AuthException();
+        }
+
+        if(!usuario.ValidarSenha(credenciais.extrairSenha())){ // Mudar quando trocar pra SHA256 (moacir falou que n precisa)
             throw new AuthException();
     }
         return usuario;
@@ -48,6 +49,6 @@ public Usuario findUserById(long id) throws SQLException {
         }
 
         return usuario;
-}
+    }
 
 }
