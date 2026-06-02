@@ -19,25 +19,13 @@ pact/
         └── util/
 ```
 ### Ja feito -
-> Model, DAO, Schema, Parte da ui
+> Model, DAO, Schema, Parte da ui, Exceptions
 
 ### To-do Next — sequência de implementação
 
 A ordem importa: cada passo depende do anterior. Não pule etapas SENAO MORTE 
 
-#### 1. Exceções customizadas — pacote `exception/`
-
-Criar as classes que serão lançadas pelos services. Todas estendem `RuntimeException` (ou uma exception base do projeto):
-
-- `EstoqueInsuficienteException` — lançada quando o pedido pede mais do que tem em estoque.
-- `ClienteNaoEncontradoException` / `UsuarioNaoEncontradoException`.
-- `ProdutoNaoEncontradoException`.
-- `EmailInvalidoException` (opcional — o VO `Email` já lança `IllegalArgumentException`).
-- `PedidoNaoEncontradoException`.
-
-Cada uma com construtor recebendo mensagem e (opcionalmente) o ID/valor que causou o erro. Manter o pacote enxuto — só exceções, sem lógica.
-
-#### 2. `util/ConnectionFactory`
+#### 1. `util/ConnectionFactory`
 
 Classe utilitária única, responsável por fornecer `Connection` JDBC.
 
@@ -47,7 +35,7 @@ Classe utilitária única, responsável por fornecer `Connection` JDBC.
   - `Class.forName("com.mysql.cj.jdbc.Driver")` no static block (opcional em Java moderno, mas seguro).
 - **Importante**: a thread de processamento abre/fecha sua própria conexão por ciclo, então a `ConnectionFactory` precisa devolver conexões novas a cada chamada (não singleton).
 
-#### 3. Services — pacote `service/`
+#### 2. Services — pacote `service/`
 
 Camada de regras de negócio. Recebe DAOs por construtor (DI manual).
 
@@ -61,7 +49,7 @@ Camada de regras de negócio. Recebe DAOs por construtor (DI manual).
   5. Se todos passarem → inserir `pedido` (status `ABERTO`) + `produto_pedido[]` + `commit`.
 - Método `finalizarPedido(idPedido)` muda status para `FILA`.
 
-#### 4. Controllers (console) — pacote `controller/`
+#### 3. Controllers (console) — pacote `controller/`
 
 Camada de menus. **Proibido importar `java.sql`** — só chama `service`.
 
@@ -69,7 +57,7 @@ Camada de menus. **Proibido importar `java.sql`** — só chama `service`.
 - Cada submenu coleta input via `Scanner`, constrói os VOs (`new Email(...)`, `new Senha(...)`), captura `IllegalArgumentException` e exceções customizadas, exibe mensagem amigável.
 - **Importante**: o menu não pode bloquear a thread de processamento — ela roda em paralelo.
 
-#### 5. Thread de processamento — `thread/ProcessadorPedidos` - PAIA
+#### 4. Thread de processamento — `thread/ProcessadorPedidos` - PAIA
 
 `Runnable` ou `Thread`. Loop infinito (com `Thread.sleep` entre ciclos):
 
