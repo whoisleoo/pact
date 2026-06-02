@@ -3,6 +3,6 @@ package exception;
 public class RegisterNotFoundException extends DomainException{
 
     public RegisterNotFoundException(String entidade, Object id) {
-        super(entidade + " com id: " + id + " não encontrado(a).");
+        super(entidade + " com id: " + id + " inválido.");
     }
 }
