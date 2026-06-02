@@ -3,6 +3,7 @@ package model.repositories;
 import java.time.LocalDateTime;
 import model.domain.Autenticacao;
 import model.domain.Nome;
+import model.domain.Senha;
 
 public record Usuario(
     Long id,
@@ -25,4 +26,6 @@ public record Usuario(
     public String ObterSenhaBanco() {
         return autenticacao.extrairSenha();
     }
+
+    public Boolean ValidarSenha(Senha senha) { return autenticacao.autenticar(senha); }
 }

@@ -36,6 +36,22 @@ public class ProdutoDAO {
         }
     }
 
+
+    public Produto findByName(String nome) throws SQLException{
+        String sql = "select * from produto where nome = ?";
+
+        try (PreparedStatement stmt = connection.prepareStatement(sql)) {
+            stmt.setString(1, nome);
+
+            try (ResultSet rs = stmt.executeQuery()) {
+                if (rs.next()) {
+                    return mapResultSetToProduto(rs);
+                }
+            }
+        }
+        return null;
+    }
+
     public Produto findById(Long id) throws SQLException {
         String sql = "select * from produto where id_produto = ?";
 
