@@ -39,8 +39,8 @@ Classe utilitária única, responsável por fornecer `Connection` JDBC.
 
 Camada de regras de negócio. Recebe DAOs por construtor (DI manual).
 
-- `UsuarioService` — cadastro com validação (email único, etc.).
-- `ProdutoService` — cadastro e listagem.
+- ~~`UsuarioService` — cadastro com validação (email único, etc.).~~
+- ~~`ProdutoService` — cadastro e listagem.~~
 - `PedidoService` — o mais complexo. Fluxo de `criarPedido`:
   1. Buscar produtos de cada item.
   2. Iniciar transação (`conn.setAutoCommit(false)`).
