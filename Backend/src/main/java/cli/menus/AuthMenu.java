@@ -1,10 +1,13 @@
 package cli.menus;
 
+import cli.core.FormRunner;
 import cli.core.Input;
 import cli.core.Menu;
 import cli.core.MenuRunner;
-import cli.core.Screen;
-import cli.core.FormRunner;
+import service.PedidoService;
+import service.ProdutoService;
+import service.RelatorioService;
+import service.UsuarioService;
 
 public class AuthMenu implements Menu {
     private static final String[] ART = {
@@ -18,19 +21,31 @@ public class AuthMenu implements Menu {
     };
 
     private final MenuRunner runner;
+    private final UsuarioService usuarioService;
+    private final ProdutoService produtoService;
+    private final PedidoService pedidoService;
+    private final RelatorioService relatorioService;
 
-    public AuthMenu(MenuRunner runner){
+    public AuthMenu(
+        MenuRunner runner,
+        UsuarioService usuarioService,
+        ProdutoService produtoService,
+        PedidoService pedidoService,
+        RelatorioService relatorioService
+    ) {
         this.runner = runner;
+        this.usuarioService = usuarioService;
+        this.produtoService = produtoService;
+        this.pedidoService = pedidoService;
+        this.relatorioService = relatorioService;
     }
-
-
 
     @Override
     public String[] banner() { return ART; }
 
     @Override
     public String title() {
-        return "\uD83E\uDE78 PACT - Auth!";
+        return "🩸 PACT - Auth!";
     }
 
     @Override
@@ -41,9 +56,18 @@ public class AuthMenu implements Menu {
     @Override
     public void execute(int escolha, Input input) {
         switch (escolha) {
-            case 1 -> new FormRunner(input).execute(new LoginMenu());
-            case 2 -> new FormRunner(input).execute(new RegisterMenu());
-
+            case 1 -> new FormRunner(input).execute(
+                new LoginMenu(
+                    runner,
+                    usuarioService,
+                    produtoService,
+                    pedidoService,
+                    relatorioService
+                )
+            );
+            case 2 -> new FormRunner(input).execute(
+                new RegisterMenu(usuarioService)
+            );
         }
     }
 
@@ -51,7 +75,4 @@ public class AuthMenu implements Menu {
     public String note(){
         return "Seja bem vindo ao PACT!";
     }
-
-
 }
-
