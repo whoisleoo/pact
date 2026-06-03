@@ -24,7 +24,7 @@ public record Usuario(
     }
 
     public String ObterSenhaBanco() {
-        return autenticacao.extrairSenha();
+        return autenticacao.extrairSenha().senhaBanco();
     }
 
     public Boolean ValidarSenha(Senha senha) { return autenticacao.autenticar(senha); }

@@ -6,7 +6,6 @@ import model.domain.StatusPedido;
 public record Pedido(
     Long id,
     Long idCliente,
-    Long idVendedor,
     List<ProdutoPedido> itens, // precisa de getter especifico para listar
     StatusPedido status
 ) {
