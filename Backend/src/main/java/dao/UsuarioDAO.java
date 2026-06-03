@@ -9,6 +9,7 @@ import java.util.List;
 import model.domain.Autenticacao;
 import model.domain.Email;
 import model.domain.Nome;
+import model.domain.Senha;
 import model.repositories.Usuario;
 
 public class UsuarioDAO {
@@ -50,14 +51,14 @@ public class UsuarioDAO {
 
     public Usuario findByEmail(String email) throws SQLException {
         String sql =
-            "select id_usuario, nome, e_mail, created_at from usuario where e_mail = ?";
+            "select id_usuario, nome, e_mail, senha, created_at from usuario where e_mail = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, email);
 
             try (ResultSet rs = stmt.executeQuery()) {
                 if (rs.next()) {
-                    return mapResultSetToUsuario(rs);
+                    return mapResultSetToUsuarioComSenha(rs);
                 }
             }
         }
@@ -84,6 +85,19 @@ public class UsuarioDAO {
             rs.getLong("id_usuario"),
             new Nome(rs.getString("nome")),
             new Autenticacao(new Email(rs.getString("e_mail")), null),
+            rs.getTimestamp("created_at").toLocalDateTime()
+        );
+    }
+
+    private Usuario mapResultSetToUsuarioComSenha(ResultSet rs)
+        throws SQLException {
+        return new Usuario(
+            rs.getLong("id_usuario"),
+            new Nome(rs.getString("nome")),
+            new Autenticacao(
+                new Email(rs.getString("e_mail")),
+                new Senha(rs.getString("senha"))
+            ),
             rs.getTimestamp("created_at").toLocalDateTime()
         );
     }
