@@ -29,9 +29,9 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `pedido` (
   `id_pedido` int(11) NOT NULL,
-  `status` enum('ABERTO','FILA','PROCESSANDO','FINALIZADO') DEFAULT 'FILA',
+  `status` enum('ABERTO','FILA','PROCESSANDO','FINALIZADO') DEFAULT 'ABERTO',
   `id_cliente` int(11) NOT NULL,
-  `id_vendedor` int(11) NOT NULL
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -89,8 +89,7 @@ CREATE TABLE `usuario` (
 --
 ALTER TABLE `pedido`
   ADD PRIMARY KEY (`id_pedido`),
-  ADD KEY `id_cliente` (`id_cliente`),
-  ADD KEY `id_vendedor` (`id_vendedor`);
+  ADD KEY `id_cliente` (`id_cliente`);
 
 --
 -- Índices de tabela `produto`
@@ -149,8 +148,7 @@ ALTER TABLE `usuario`
 -- Restrições para tabelas `pedido`
 --
 ALTER TABLE `pedido`
-  ADD CONSTRAINT `pedido_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `usuario` (`id_usuario`),
-  ADD CONSTRAINT `pedido_ibfk_2` FOREIGN KEY (`id_vendedor`) REFERENCES `usuario` (`id_usuario`);
+  ADD CONSTRAINT `pedido_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `usuario` (`id_usuario`);
 
 --
 -- Restrições para tabelas `produto`
