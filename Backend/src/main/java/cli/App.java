@@ -21,8 +21,9 @@ public class App {
     public static void main(String[] args) throws Exception {
         System.setOut(new PrintStream(System.out, true, "UTF-8"));
 
-        // Conexão do menu (a thread usa as suas próprias).
-        Connection conn = ConnectionFactory.getConnection();
+        try {
+            // Conexão do menu (a thread usa as suas próprias).
+            Connection conn = ConnectionFactory.getConnection();
 
         // Wiring manual das dependências (DI sem framework).
         UsuarioService usuarioService = new UsuarioService(new UsuarioDAO(conn));
@@ -56,5 +57,9 @@ public class App {
 
         scanner.close();
         conn.close();
+        } catch (Exception e) {
+            System.err.println("\n[ERRO CRITICO] Falha ao iniciar a aplicacao: " + e.getMessage());
+            System.err.println("Verifique se o banco de dados (XAMPP) esta rodando.");
+        }
     }
 }

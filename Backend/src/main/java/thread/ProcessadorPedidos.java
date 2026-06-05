@@ -29,10 +29,10 @@ public class ProcessadorPedidos implements Runnable {
             } catch (InterruptedException e) {
                 Thread.currentThread().interrupt();
                 return;
-            } catch (SQLException e) {
-                // Não derruba a thread por uma falha pontual de banco.
+            } catch (Exception e) {
+                // Não derruba a thread por uma falha pontual de banco ou erro em runtime (ex: NPE).
                 System.err.println(
-                    "[ProcessadorPedidos] erro: " + e.getMessage()
+                    "[ProcessadorPedidos] erro inesperado: " + e.getMessage()
                 );
             }
         }

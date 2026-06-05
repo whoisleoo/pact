@@ -25,7 +25,11 @@ public final class MenuRunner {
             if (escolha == 0) return;
 
             Screen.clearScreen();
-            menu.execute(escolha, input);
+            try {
+                menu.execute(escolha, input);
+            } catch (Exception e) {
+                Screen.error("Erro inesperado: " + e.getMessage());
+            }
             input.pause();
         }
     }

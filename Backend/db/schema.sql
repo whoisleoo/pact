@@ -99,6 +99,7 @@ ALTER TABLE `pedido`
 --
 ALTER TABLE `produto`
   ADD PRIMARY KEY (`id_produto`),
+  ADD UNIQUE KEY `nome_unique` (`nome`),
   ADD KEY `id_vendedor` (`id_vendedor`);
 
 --
@@ -113,7 +114,8 @@ ALTER TABLE `produto_pedido`
 -- Índices de tabela `usuario`
 --
 ALTER TABLE `usuario`
-  ADD PRIMARY KEY (`id_usuario`);
+  ADD PRIMARY KEY (`id_usuario`),
+  ADD UNIQUE KEY `email_unique` (`e_mail`);
 
 --
 -- AUTO_INCREMENT para tabelas despejadas
