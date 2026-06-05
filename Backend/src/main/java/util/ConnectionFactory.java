@@ -4,16 +4,6 @@ import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.SQLException;
 
-/**
- * Fábrica de conexões JDBC.
- *
- * Cada chamada de {@link #getConnection()} devolve uma conexão NOVA — isso é
- * essencial porque a thread de processamento abre e fecha a sua própria
- * conexão a cada ciclo, isolada da conexão usada pelo menu.
- *
- * Credenciais via variáveis de ambiente (DB_URL, DB_USER, DB_PASSWORD) com
- * fallback para os valores padrão de desenvolvimento.
- */
 public final class ConnectionFactory {
 
     private static final String URL = env(
@@ -31,6 +21,6 @@ public final class ConnectionFactory {
 
     private static String env(String chave, String padrao) {
         String valor = System.getenv(chave);
-        return (valor == null || valor.isBlank()) ? padrao : valor;
+        return (valor == null) ? padrao : valor;
     }
 }
