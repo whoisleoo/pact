@@ -18,59 +18,6 @@ pact/
         ├── thread/
         └── util/
 ```
-### Ja feito -
-> Model, DAO, Schema, Parte da ui, Exceptions
-
-### To-do Next — sequência de implementação
-
-A ordem importa: cada passo depende do anterior. Não pule etapas SENAO MORTE 
-
-#### 1. `util/ConnectionFactory`
-
-Classe utilitária única, responsável por fornecer `Connection` JDBC.
-
-- O enunciado diz que o professor fornece uma classe utilitária básica — usar a dele quando chegar. Até lá, escrever um stub:
-  - Lê credenciais do `.env` (URL, usuário, senha) ou de constantes.
-  - Método estático `Connection getConnection() throws SQLException`.
-  - `Class.forName("com.mysql.cj.jdbc.Driver")` no static block (opcional em Java moderno, mas seguro).
-- **Importante**: a thread de processamento abre/fecha sua própria conexão por ciclo, então a `ConnectionFactory` precisa devolver conexões novas a cada chamada (não singleton).
-
-#### 2. Services — pacote `service/`
-
-Camada de regras de negócio. Recebe DAOs por construtor (DI manual).
-
-- ~~`UsuarioService` — cadastro com validação (email único, etc.).~~
-- ~~`ProdutoService` — cadastro e listagem.~~
-- `PedidoService` — o mais complexo. Fluxo de `criarPedido`:
-  1. Buscar produtos de cada item.
-  2. Iniciar transação (`conn.setAutoCommit(false)`).
-  3. Para cada item: tentar baixar estoque com o `UPDATE` condicional.
-  4. Se algum falhar → `rollback` + lança `EstoqueInsuficienteException`.
-  5. Se todos passarem → inserir `pedido` (status `ABERTO`) + `produto_pedido[]` + `commit`.
-- Método `finalizarPedido(idPedido)` muda status para `FILA`.
-
-#### 3. Controllers (console) — pacote `controller/`
-
-Camada de menus. **Proibido importar `java.sql`** — só chama `service`.
-
-- `Main` com loop de menu principal: cadastrar cliente, cadastrar produto, criar pedido, finalizar pedido, listar tudo, relatórios, sair.
-- Cada submenu coleta input via `Scanner`, constrói os VOs (`new Email(...)`, `new Senha(...)`), captura `IllegalArgumentException` e exceções customizadas, exibe mensagem amigável.
-- **Importante**: o menu não pode bloquear a thread de processamento — ela roda em paralelo.
-
-#### 4. Thread de processamento — `thread/ProcessadorPedidos` - PAIA
-
-`Runnable` ou `Thread`. Loop infinito (com `Thread.sleep` entre ciclos):
-
-1. Abrir conexão própria via `ConnectionFactory.getConnection()`.
-2. Buscar pedidos com status `FILA` (`SELECT ... LIMIT 1`).
-3. Marcar como `PROCESSAMENTO` com o UPDATE condicional atômico do passo 4.
-4. Se conseguiu (linhas afetadas == 1), simular processamento (`Thread.sleep(3000)`).
-5. Atualizar status para `ENTREGUE` (ou `FINALIZADO`).
-6. Fechar conexão.
-7. Voltar pro passo 1.
-
-Iniciar a thread no `Main` antes do loop de menu: `new Thread(new ProcessadorPedidos()).start()`.
-
 ### Backend
 
 | Pacote | Função                                                                                                                                                                                                                               |
@@ -124,21 +71,40 @@ Observações gerais
 
 Use este arquivo como referência rápida ao implementar DAOs e serviços que consumirão esses modelos.
 
-### Build (Maven)
+### Configuração do Banco de Dados (Local - XAMPP)
 
-O projeto usa Maven, note-se que ele VAI ter que ser alterado com o passar do tempo pra funfar com o CLI. FAVOR PIA LEO ADICIONAR O POM DELE AQUI. O [Backend/pom.xml](Backend/pom.xml) deve (deveria) definir:
+Para rodar a aplicação utilizando o MySQL do XAMPP (sem Docker):
 
-- Java 21 como source/target
-- Encoding UTF-8
-- Dependência do driver MySQL JDBC (`mysql-connector-j`)
+1. **Iniciar o MySQL**: Abra o *XAMPP Control Panel* e clique em **Start** ao lado do módulo MySQL (e opcionalmente do Apache, caso queira usar o phpMyAdmin).
+2. **Criar o Banco de Dados**:
+   - Acesse o phpMyAdmin em `http://localhost/phpmyadmin` ou utilize um cliente SQL de sua preferência.
+   - Crie um banco de dados chamado `di_foda` com o charset `utf8mb4` (ex: `utf8mb4_general_ci`).
+3. **Importar o Schema (DDL)**:
+   - Importe ou execute o conteúdo do arquivo [schema.sql](file:///c:/Users/gabri/Desktop/DI/pact/Backend/db/schema.sql) no banco de dados recém-criado.
+4. **Credenciais**:
+   - Por padrão, a aplicação conecta no MySQL do XAMPP usando a porta `3306`, usuário `root` e senha vazia (sem senha). O arquivo `ConnectionFactory` já está pré-configurado para isso.
 
-Compilar:
+---
+
+### Compilação e Execução (Maven)
+
+Certifique-se de estar na pasta do Backend:
 ```bash
 cd Backend
+```
+
+1. **Compilar**:
+```bash
 mvn compile
 ```
 
-Rodar (após existir uma classe `Main`):
-```bash
-mvn exec:java -Dexec.mainClass="Main"
-```
+2. **Rodar a aplicação** (configurando o terminal para UTF-8 para exibir os caracteres ANSI/ASCII corretamente):
+- **No PowerShell:**
+  ```powershell
+  chcp 65001; mvn exec:java
+  ```
+- **No Command Prompt (CMD):**
+  ```cmd
+  chcp 65001 && mvn exec:java
+  ```
+*(O Maven executará a classe principal `cli.App` automaticamente conforme configurado no [pom.xml](file:///c:/Users/gabri/Desktop/DI/pact/Backend/pom.xml))*

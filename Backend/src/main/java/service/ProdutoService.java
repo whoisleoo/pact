@@ -1,6 +1,7 @@
 package service;
 
 import dao.ProdutoDAO;
+import exception.DatabaseException;
 import exception.DupeRegisterException;
 import exception.RegisterNotFoundException;
 import model.repositories.Produto;
@@ -14,36 +15,47 @@ public class ProdutoService {
         this.produtoDAO = produtoDAO;
     }
 
+    public void registrarProduto(Produto produto) {
+        try {
+            Produto produtoExists = produtoDAO.findByName(produto.getNome());
 
-    public void registrarProduto(Produto produto) throws SQLException{
-        Produto produtoExists = produtoDAO.findByName(produto.getNome());
+            if (produtoExists != null) {
+                throw new DupeRegisterException("Produto", produto.getNome());
+            }
 
-        if(produtoExists != null){
-            throw new DupeRegisterException("Produto", produto.getNome());
+            produtoDAO.insert(produto);
+        } catch (SQLException e) {
+            throw new DatabaseException("Erro ao registrar produto", e);
         }
-
-    produtoDAO.insert(produto);
-
     }
 
-
-    public List<Produto> listAllProducts() throws SQLException{
-        return produtoDAO.findAll();
-    }
-
-    public Produto findById(Long id) throws SQLException {
-        Produto produto = produtoDAO.findById(id);
-
-        if(produto == null){
-            throw new RegisterNotFoundException("Produto", id);
+    public List<Produto> listAllProducts() {
+        try {
+            return produtoDAO.findAll();
+        } catch (SQLException e) {
+            throw new DatabaseException("Erro ao listar produtos", e);
         }
-
-        return produto;
     }
 
+    public Produto findById(Long id) {
+        try {
+            Produto produto = produtoDAO.findById(id);
 
-    public List<Produto> findByCategoria(String categoria) throws SQLException {
-        return produtoDAO.findByCategoria(categoria);
+            if (produto == null) {
+                throw new RegisterNotFoundException("Produto", id);
+            }
+
+            return produto;
+        } catch (SQLException e) {
+            throw new DatabaseException("Erro ao buscar produto", e);
+        }
     }
 
+    public List<Produto> findByCategoria(String categoria) {
+        try {
+            return produtoDAO.findByCategoria(categoria);
+        } catch (SQLException e) {
+            throw new DatabaseException("Erro ao buscar produtos por categoria", e);
+        }
+    }
 }

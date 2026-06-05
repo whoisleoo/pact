@@ -107,9 +107,9 @@ public class ProdutoDAO {
             stmt.setInt(1, quantidade);
             stmt.setLong(2, id);
             stmt.setInt(3, quantidade);
-        }
 
-        return 0;
+            return stmt.executeUpdate();
+        }
     }
 
     private Produto mapResultSetToProduto(ResultSet rs) throws SQLException {

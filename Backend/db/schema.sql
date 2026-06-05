@@ -7,6 +7,9 @@
 -- Versão do servidor: 10.4.32-MariaDB
 -- Versão do PHP: 8.2.12
 
+CREATE DATABASE IF NOT EXISTS `di_foda`;
+USE `di_foda`;
+
 SET SQL_MODE = "NO_AUTO_VALUE_ON_ZERO";
 START TRANSACTION;
 SET time_zone = "+00:00";
@@ -29,9 +32,9 @@ SET time_zone = "+00:00";
 
 CREATE TABLE `pedido` (
   `id_pedido` int(11) NOT NULL,
-  `status` enum('ABERTO','FILA','PROCESSANDO','FINALIZADO') DEFAULT 'FILA',
+  `status` enum('ABERTO','FILA','PROCESSANDO','FINALIZADO') DEFAULT 'ABERTO',
   `id_cliente` int(11) NOT NULL,
-  `id_vendedor` int(11) NOT NULL
+  `created_at` timestamp NOT NULL DEFAULT current_timestamp()
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -89,14 +92,14 @@ CREATE TABLE `usuario` (
 --
 ALTER TABLE `pedido`
   ADD PRIMARY KEY (`id_pedido`),
-  ADD KEY `id_cliente` (`id_cliente`),
-  ADD KEY `id_vendedor` (`id_vendedor`);
+  ADD KEY `id_cliente` (`id_cliente`);
 
 --
 -- Índices de tabela `produto`
 --
 ALTER TABLE `produto`
   ADD PRIMARY KEY (`id_produto`),
+  ADD UNIQUE KEY `nome_unique` (`nome`),
   ADD KEY `id_vendedor` (`id_vendedor`);
 
 --
@@ -111,7 +114,8 @@ ALTER TABLE `produto_pedido`
 -- Índices de tabela `usuario`
 --
 ALTER TABLE `usuario`
-  ADD PRIMARY KEY (`id_usuario`);
+  ADD PRIMARY KEY (`id_usuario`),
+  ADD UNIQUE KEY `email_unique` (`e_mail`);
 
 --
 -- AUTO_INCREMENT para tabelas despejadas
@@ -149,8 +153,7 @@ ALTER TABLE `usuario`
 -- Restrições para tabelas `pedido`
 --
 ALTER TABLE `pedido`
-  ADD CONSTRAINT `pedido_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `usuario` (`id_usuario`),
-  ADD CONSTRAINT `pedido_ibfk_2` FOREIGN KEY (`id_vendedor`) REFERENCES `usuario` (`id_usuario`);
+  ADD CONSTRAINT `pedido_ibfk_1` FOREIGN KEY (`id_cliente`) REFERENCES `usuario` (`id_usuario`);
 
 --
 -- Restrições para tabelas `produto`
