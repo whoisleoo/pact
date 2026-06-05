@@ -3,8 +3,8 @@ package cli.menus;
 import cli.core.Form;
 import cli.core.Input;
 import cli.core.Screen;
+import exception.DatabaseException;
 import exception.DomainException;
-import java.sql.SQLException;
 import model.domain.Autenticacao;
 import model.domain.Email;
 import model.domain.Nome;
@@ -61,10 +61,8 @@ public class RegisterMenu implements Form {
             );
             usuarioService.registrarUsuario(usuario);
             Screen.success("Usuário registrado! Agora faça login.");
-        } catch (DomainException | IllegalArgumentException e) {
+        } catch (DomainException | IllegalArgumentException | DatabaseException e) {
             Screen.error(e.getMessage());
-        } catch (SQLException e) {
-            Screen.error("Erro de banco: " + e.getMessage());
         }
     }
 }

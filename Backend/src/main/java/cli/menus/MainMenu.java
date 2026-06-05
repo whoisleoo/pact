@@ -4,9 +4,9 @@ import cli.core.Input;
 import cli.core.Menu;
 import cli.core.MenuRunner;
 import cli.core.Screen;
+import exception.DatabaseException;
 import exception.DomainException;
 import java.math.BigDecimal;
-import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -89,14 +89,12 @@ public class MainMenu implements Menu {
                 case 5 -> listarPedidos();
                 case 6 -> relatorios();
             }
-        } catch (DomainException | IllegalArgumentException e) {
+        } catch (DomainException | IllegalArgumentException | DatabaseException e) {
             Screen.error(e.getMessage());
-        } catch (SQLException e) {
-            Screen.error("Erro de banco: " + e.getMessage());
         }
     }
 
-    private void cadastrarProduto(Input input) throws SQLException {
+    private void cadastrarProduto(Input input) {
         String nome = input.readText("Nome do produto", 100);
         String descricao = input.readText("Descricao", 250);
         double preco = input.readDouble("Preco");
@@ -121,7 +119,7 @@ public class MainMenu implements Menu {
         Screen.success("Produto \"" + nome + "\" cadastrado!");
     }
 
-    private void listarProdutos() throws SQLException {
+    private void listarProdutos() {
         List<Produto> produtos = produtoService.listAllProducts();
         if (produtos.isEmpty()) {
             Screen.warning("Nenhum produto cadastrado.");
@@ -138,7 +136,7 @@ public class MainMenu implements Menu {
         }
     }
 
-    private void criarPedido(Input input) throws SQLException {
+    private void criarPedido(Input input) {
         listarProdutos();
 
         List<ItemPedidoRequest> itens = new ArrayList<>();
@@ -161,7 +159,7 @@ public class MainMenu implements Menu {
         );
     }
 
-    private void finalizarPedido(Input input) throws SQLException {
+    private void finalizarPedido(Input input) {
         long id = input.readInt("ID do pedido para finalizar");
         pedidoService.finalizarPedido(id);
         Screen.success(
@@ -170,7 +168,7 @@ public class MainMenu implements Menu {
         );
     }
 
-    private void listarPedidos() throws SQLException {
+    private void listarPedidos() {
         List<Pedido> pedidos = pedidoService.listarTodos();
         if (pedidos.isEmpty()) {
             Screen.warning("Nenhum pedido cadastrado.");
@@ -193,7 +191,7 @@ public class MainMenu implements Menu {
         }
     }
 
-    private void relatorios() throws SQLException {
+    private void relatorios() {
         System.out.println();
         System.out.println("  == Produtos por categoria ==");
         for (RelatorioCategoria r : relatorioService.produtosPorCategoria()) {

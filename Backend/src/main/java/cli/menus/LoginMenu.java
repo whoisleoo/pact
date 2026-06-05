@@ -4,8 +4,8 @@ import cli.core.Form;
 import cli.core.Input;
 import cli.core.MenuRunner;
 import cli.core.Screen;
+import exception.DatabaseException;
 import exception.DomainException;
-import java.sql.SQLException;
 import model.domain.Autenticacao;
 import model.domain.Email;
 import model.domain.Senha;
@@ -88,10 +88,8 @@ public class LoginMenu implements Form {
                     relatorioService
                 )
             );
-        } catch (DomainException | IllegalArgumentException e) {
+        } catch (DomainException | IllegalArgumentException | DatabaseException e) {
             Screen.error(e.getMessage());
-        } catch (SQLException e) {
-            Screen.error("Erro de banco: " + e.getMessage());
         }
     }
 }
