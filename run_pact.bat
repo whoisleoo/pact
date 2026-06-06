@@ -9,7 +9,7 @@ echo.
 
 :: 1. Verificar se o MySQL do XAMPP esta ativo
 echo [1/3] Verificando conexao com o banco de dados MySQL...
-"c:\xampp\mysql\bin\mysqladmin.exe" -u root ping >nul 2>&1
+netstat -an | find "3306" | find "LISTENING" >nul
 if %errorlevel% neq 0 (
     echo [ERRO] O MySQL nao esta ativo na porta 3306!
     echo.
