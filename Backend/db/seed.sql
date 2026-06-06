@@ -2,10 +2,10 @@ USE `di_foda`;
 
 -- Limpar dados existentes para evitar erros de chave primária duplicada ao reexecutar o seed
 SET FOREIGN_KEY_CHECKS = 0;
-TRUNCATE TABLE `produto_pedido`;
-TRUNCATE TABLE `pedido`;
-TRUNCATE TABLE `produto`;
-TRUNCATE TABLE `usuario`;
+DELETE FROM `produto_pedido`;
+DELETE FROM `pedido`;
+DELETE FROM `produto`;
+DELETE FROM `usuario`;
 SET FOREIGN_KEY_CHECKS = 1;
 
 -- Inserir Usuários (Senhas com mínimo de 8 caracteres contendo letras e números conforme validação da classe Senha)
