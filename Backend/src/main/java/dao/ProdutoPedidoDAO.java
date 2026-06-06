@@ -19,8 +19,7 @@ public class ProdutoPedidoDAO {
     }
 
     public void insertBatch(List<ProdutoPedido> itens) throws SQLException {
-        String sql =
-            "INSERT INTO produto_pedido (id_pedido, id_produto, quantidade, preco_unitario) VALUES (?, ?, ?, ?)";
+        String sql = "INSERT INTO produto_pedido (id_pedido, id_produto, quantidade, preco_unitario) VALUES (?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             for (ProdutoPedido item : itens) {
