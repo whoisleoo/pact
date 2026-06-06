@@ -70,7 +70,13 @@ Observações gerais
 - Para operações de pedido, a aplicação deve garantir atualizações condicionais no banco para evitar estoque negativo (por exemplo `UPDATE produto SET estoque = estoque - ? WHERE id = ? AND estoque >= ?`).
 
 Use este arquivo como referência rápida ao implementar DAOs e serviços que consumirão esses modelos.
+### Requisitos gerais
 
+O computador precisa ter as seguintes dependencias instaladas e no `PATH`: 
+
+- Java 21
+- Maven
+- XAMPP (ou outro gerenciador de banco de dados / mysql server / docker)
 ### Configuração do Banco de Dados (Local - XAMPP)
 
 Para rodar a aplicação utilizando o MySQL do XAMPP (sem Docker):
@@ -92,6 +98,12 @@ Certifique-se de estar na pasta do Backend:
 ```bash
 cd Backend
 ```
+
+#### > Opção Rápida
+
+Execute o arquivo `run_pact.bat` em um terminal aberto na pasta do projeto, ele conectará ao banco de dados, verificará o Maven e as dependencias, baixará todas se não as encontrar e rodará o projeto. 
+
+### Ou
 
 1. **Compilar**:
 ```bash
