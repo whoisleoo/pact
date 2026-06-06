@@ -67,8 +67,7 @@ public class PedidoDAO {
 
     public int updateStatus(Long id, String statusAtual, String novoStatus)
         throws SQLException {
-        String sql =
-            "UPDATE pedido SET status = ? WHERE id_pedido = ? AND status = ?";
+        String sql = "UPDATE pedido SET status = ? WHERE id_pedido = ? AND status = ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, novoStatus);

@@ -20,8 +20,7 @@ public class ProdutoDAO {
     }
 
     public void insert(Produto produto) throws SQLException {
-        String sql =
-            "insert into produto (nome, preco, ativo, descricao, categoria, id_vendedor, estoque) values (?, ?, ?, ?, ?, ?, ?)";
+        String sql = "insert into produto (nome, preco, ativo, descricao, categoria, id_vendedor, estoque) values (?, ?, ?, ?, ?, ?, ?)";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setString(1, produto.getNome());
@@ -100,8 +99,7 @@ public class ProdutoDAO {
     }
 
     public int decrementarEstoque(Long id, int quantidade) throws SQLException {
-        String sql =
-            "UPDATE produto SET estoque = estoque - ? WHERE id_produto = ? AND estoque >= ?";
+        String sql = "UPDATE produto SET estoque = estoque - ? WHERE id_produto = ? AND estoque >= ?";
 
         try (PreparedStatement stmt = connection.prepareStatement(sql)) {
             stmt.setInt(1, quantidade);
