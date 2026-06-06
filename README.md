@@ -76,7 +76,7 @@ O computador precisa ter as seguintes dependencias instaladas e no `PATH`:
 
 - Java 21
 - Maven
-- XAMPP (ou outro gerenciador de banco de dados / mysql server / docker)
+- XAMPP (ou outro gerenciador de banco de dados / mysql server / docker com imagem SQL )
 ### Configuração do Banco de Dados (Local - XAMPP)
 
 Para rodar a aplicação utilizando o MySQL do XAMPP (sem Docker):
@@ -101,7 +101,7 @@ cd Backend
 
 #### > Opção Rápida
 
-Execute o arquivo `run_pact.bat` em um terminal aberto na pasta do projeto, ele conectará ao banco de dados, verificará o Maven e as dependencias, baixará todas se não as encontrar e rodará o projeto. 
+Execute o arquivo `run_pact.bat` em um terminal aberto na pasta do projeto, ele conectará ao banco de dados, verificará o Maven e as dependencias, baixará todas se não as encontrar e rodará o projeto, o .bat vai sempre ouvir a porta 3306, certifique-se do MySQL estar nessa porta.
 
 ### Ou
 
