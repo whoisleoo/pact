@@ -66,7 +66,6 @@ Observações gerais
 
 - Os VOs seguem a ideia de objetos imutáveis nascendo válidos no construtor (alinhado ao enunciado e a Object Calisthenics).
 - `Senha` nunca expõe o valor cru — autenticação é feita por comparação de VO via `equals`.
-- Falta integração com DAOs/`dao/` que façam as operações JDBC com `try-with-resources` e `PreparedStatement`.
 - Para operações de pedido, a aplicação deve garantir atualizações condicionais no banco para evitar estoque negativo (por exemplo `UPDATE produto SET estoque = estoque - ? WHERE id = ? AND estoque >= ?`).
 
 Use este arquivo como referência rápida ao implementar DAOs e serviços que consumirão esses modelos.
